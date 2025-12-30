@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전기기능사 통합 암기 카드</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            /* 기본 테마 색상 (나중에 JS로 변경됨) */
+            --primary-color: #4a90e2; 
+            --secondary-color: #f0f2f5;
+            --text-color: #333;
+            --card-bg: #fff;
+        }
+
+        body {
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+            background-color: var(--secondary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 0.3s;
+        }
+
+        /* 상단 네비게이션 (탭) */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            z-index: 100;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #ddd;
+            color: #666;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+        .header-title h1 { margin: 0; font-size: 1.5rem; }
+        .header-title p { margin: 5px 0 0; font-size: 0.9rem; color: #666; }
+
+        /* 카드 컨테이너 */
+        .card-container {
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            height: 350px;
+            perspective: 1000px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* 카드 앞/뒤 공통 */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            box-sizing: border-box;
+            text-align: center;
+            border-radius: 16px;
+            background-color: var(--card-bg);
+        }
+
+        /* 앞면 */
+        .card-front {
+            border: 3px solid var(--primary-color);
+            color: var(--text-color);
+        }
+
+        /* 뒷면 */
+        .card-back {
+            background-color: var(--primary-color);
+            color: white;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+        }
+
+        .card-number {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .card-front .card-number { color: var(--primary-color); }
+        .card-back .card-number { color: rgba(255,255,255,0.8); }
+
+        h2 { font-size: 1.4em; margin-bottom: 15px; word-break: keep-all; line-height: 1.4; }
+        
+        .content-box {
+            font-size: 1.15em;
+            line-height: 1.6;
+            word-break: keep-all;
+        }
+
+        /* MathJax 폰트 크기 */
+        mjx-container { font-size: 1.1em !important; }
+
+        .hint {
+            position: absolute;
+            bottom: 15px;
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* 컨트롤 버튼 */
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .ctrl-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background-color: #fff;
+            color: var(--text-color);
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ctrl-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+
+        .ctrl-btn:active { transform: translateY(0); }
+
+        .progress {
+            font-weight: bold;
+            color: #555;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        /* 모바일 대응 */
+        @media (max-width: 600px) {
+            .card-container { height: 400px; }
+            .nav-tabs { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('theory')">1. 전기이론</button>
+        <button class="tab-btn" onclick="switchTab('mag')">2. 전자기학</button>
+        <button class="tab-btn" onclick="switchTab('ac')">3. 교류회로</button>
+    </div>
+
+    <div class="header-title">
+        <h1 id="chapterTitle">전기이론 요점정리</h1>
+        <p>카드를 클릭하여 정답을 확인하세요</p>
+    </div>
+
+    <div class="card-container" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-front">
+                <div class="card-number" id="cardIndex">Q 1</div>
+                <h2 id="cardQ">질문 로딩중...</h2>
+                <div class="hint">클릭해서 뒤집기</div>
+            </div>
+            <div class="card-face card-back">
+                <div class="card-number" id="cardIndexBack">A 1</div>
+                <div id="cardA" class="content-box">정답 로딩중...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="ctrl-btn" onclick="prevCard(event)">← 이전</button>
+        <div class="progress" id="progressDisplay">1 / 30</div>
+        <button class="ctrl-btn" onclick="nextCard(event)">다음 →</button>
+    </div>
+
+    <script>
+        // -------------------- 데이터셋 통합 --------------------
+        const datasets = {
+            // [1] 전기이론 요점 (Blue Theme)
+            theory: {
+                color: "#4a90e2",
+                title: "전기이론 요점정리",
+                data: [
+                    { q: "자유전자란?", a: "최외각 전자로 핵의 구속을 벗어나 자유로이 이동하는 전자" },
+                    { q: "전자 1개의 전기량 (e)", a: "\\( e = 1.602 \\times 10^{-19} \\text{ [C]} \\)" },
+                    { q: "전기량 (Q) 공식", a: "전하가 가지고 있는 전기의 양<br>\\( Q = It \\text{ [C]} \\)" },
+                    { q: "전류 (I) 정의 및 공식", a: "1초 동안에 이동한 전기량<br>\\( I = \\frac{Q}{t} \\text{ [A]} \\)" },
+                    { q: "전압 (V) 정의 및 공식", a: "1[C]의 전기량을 이동시키는데 필요한 일의 양<br>\\( V = \\frac{W}{Q} \\text{ [J/C], [V]} \\)" },
+                    { q: "전기저항 (R) 및 컨덕턴스 (G)", a: "전류의 흐름을 방해하는 정도<br>\\( R = \\rho \\frac{l}{A} [\\Omega]\\)<br><br>\\( G = \\frac{1}{R} [\\mho], [S] \\)" },
+                    { q: "옴의 법칙 (Ohm's Law)", a: "V, I, R 과의 관계<br>\\( V=IR, \\quad I=\\frac{V}{R}, \\quad R=\\frac{V}{I} \\)" },
+                    { q: "저항의 직렬 접속", a: "전압분배: 저항 크기에 비례하여 분배됨<br>합성저항: \\( R_0 = R_1 + R_2 \\)" },
+                    { q: "저항의 병렬 접속", a: "전류분배: 저항 크기에 반비례하여 분배됨<br>합성저항: \\( R_0 = \\frac{R_1 R_2}{R_1 + R_2} \\)" },
+                    { q: "키르히호프의 제1법칙 (전류법칙)", a: "임의의 한점에 유입되는 전류의 합 = 유출되는 전류의 합<br>\\( \\sum I_{in} = \\sum I_{out} \\)" },
+                    { q: "키르히호프의 제2법칙 (전압법칙)", a: "폐회로 내의 기전력의 합 = 전압강하의 합<br>\\( \\sum E = \\sum IR \\)" },
+                    { q: "전지의 직렬/병렬 접속 전류", a: "m: 병렬 개수, n: 직렬 개수<br>\\( I = \\frac{nE}{\\frac{nr}{m} + R} \\)" },
+                    { q: "계기 설치 방법", a: "전류계(A): 부하와 <strong>직렬</strong> 접속<br>전압계(V): 부하와 <strong>병렬</strong> 접속" },
+                    { q: "배율기 (전압 측정 범위 확대)", a: "전압계에 <strong>직렬</strong>로 외부저항 연결<br>\\( R_m = (M-1) \\times r_v \\)" },
+                    { q: "분류기 (전류 측정 범위 확대)", a: "전류계에 <strong>병렬</strong>로 외부저항 연결<br>\\( R_s = \\frac{1}{M-1} \\times r_a \\)" },
+                    { q: "전력 (P)", a: "1초 동안 소비되는 전기에너지<br>\\( P = VI = \\frac{V^2}{R} = I^2 R \\text{ [W]} \\)" },
+                    { q: "전력량 (W)", a: "t초 동안 소비되는 전기에너지<br>\\( W = Pt = VIt = I^2 Rt= \\frac{V^2}{R}t \\text{ [J]} \\)" },
+                    { q: "주울의 법칙 (Joule's law)", a: "전기에너지 → 열에너지 변환<br>\\( 1 \\text{ [J]} = 0.24 \\text{ [cal]} \\)" },
+                    { q: "발열량 (H)", a: "\\( H = 0.24Pt = 0.24VIt = 0.24 I^2 R t \\text{ [cal]} \\)" },
+                    { q: "주요 단위 환산", a: "\\( 1 \\text{ [kWh]} = 860 \\text{ [kcal]} \\)<br>\\( 1 \\text{ [HP]} = 746 \\text{ [W]} \\)" },
+                    { q: "브리지 회로의 평형조건", a: "마주보는 저항의 곱이 같다<br>\\( P \\times R = Q \\times X \\)" },
+                    { q: "열전현상 3가지", a: "1. <strong>제어백</strong>: 온도차 → 기전력<br>2. <strong>펠티어</strong>: 전류 → 냉각/발열<br>3. <strong>톰슨</strong>: 동일금속 전류 → 발열/흡열" },
+                    { q: "패러데이의 법칙", a: "석출량은 전기량과 화학당량에 비례<br>\\( w = kQ = kIt \\text{ [g]} \\)" },
+                    { q: "납 축전지 용량", a: "\\( Q = It \\text{ [Ah]} \\)" },
+                    { q: "분극작용", a: "수소가스 발생 → 기전력 감소<br>해결: <strong>감극제(MnO₂)</strong> 사용" },
+                    { q: "국부작용", a: "불순물에 의한 기전력 감소<br>해결: <strong>수은도금</strong>" },
+                    { q: "반도체 (N형 vs P형)", a: "<strong>N형</strong>: 5가(도너), 전자<br><strong>P형</strong>: 3가(억셉터), 정공" },
+                    { q: "실리콘 정류기 (SCR)", a: "PNPN 접합, 단방향성 3단자 소자<br>게이트(G)에 (+) 펄스 공급" },
+                    { q: "쌍방향성 소자 종류", a: "TRIAC, DIAC, SIDAC, SSC, SBS" },
+                    { q: "단일 접합 트랜지스터 (UJT)", a: "용도: SCR의 트리거 펄스 발생용" }
+                ]
+            },
+
+            // [2] 전기자기학 (Green Theme)
+            mag: {
+                color: "#28a745",
+                title: "전자기학 핵심 공식",
+                data: [
+                    { q: "기본 단위 비교<br>전하 (Q) vs 자하 (m)", a: "전하: \\( Q \\text{ [C]} \\)<br>자하: \\( m \\text{ [wb]} \\)" },
+                    { q: "상수 값 비교<br>유전율 (ε₀) vs 투자율 (μ₀)", a: "진공 유전율: \\( \\varepsilon_0 = 8.855 \\times 10^{-12} \\text{ [F/m]} \\)<br>진공 투자율: \\( \\mu_0 = 4\\pi \\times 10^{-7} \\text{ [H/m]} \\)" },
+                    { q: "쿨롱의 법칙 (힘 F)<br>공식 비교", a: "전기력: \\( F = 9 \\times 10^9 \\frac{Q_1 Q_2}{r^2} \\text{ [N]} \\)<br>자기력: \\( F = 6.33 \\times 10^4 \\frac{m_1 m_2}{r^2} \\text{ [N]} \\)" },
+                    { q: "장의 세기 (Intensity)<br>전계 (E) vs 자계 (H)", a: "전계: \\( E = \\frac{Q}{4\\pi\\varepsilon_0 r^2} \\text{ [V/m]} \\)<br>자계: \\( H = \\frac{m}{4\\pi\\mu_0 r^2} \\text{ [AT/m]} \\)" },
+                    { q: "전기력선 vs 자기력선<br>성질 차이점", a: "전기력선: (+)에서 (-), 도체표면에 수직<br>자기력선: N극에서 S극, <strong>폐곡선</strong>(시작/끝 없음)" },
+                    { q: "밀도 (Density)<br>전속밀도 (D) vs 자속밀도 (B)", a: "전속밀도: \\( D = \\varepsilon E = \\frac{Q}{A} [C/m^2] \\)<br>자속밀도: \\( B = \\mu H = \\frac{\\phi}{A} [wb/m^2] \\)" },
+                    { q: "전위 (V) vs 자위 (U)", a: "전위: \\( V = 9 \\times 10^9 \\frac{Q}{r} \\text{ [V]} \\)<br>자위: \\( U = 6.33 \\times 10^4 \\frac{m}{r} \\text{ [A]} \\)" },
+                    { q: "콘덴서 (C)와 전하 (Q)의 관계", a: "\\( Q = CV \\text{ [C]} \\)<br>정전용량: \\( C = \\varepsilon \\frac{A}{d} \\text{ [F]} \\)" },
+                    { q: "콘덴서의 합성용량<br>(직렬 vs 병렬)", a: "<strong>직렬 (합분의 곱):</strong> \\( C_0 = \\frac{C_1 C_2}{C_1 + C_2} \\)<br><strong>병렬 (단순 합):</strong> \\( C_0 = C_1 + C_2 \\)" },
+                    { q: "전류에 의한 자계 (1)<br>무한장 직선 & 원형 코일", a: "무한 직선: \\( H = \\frac{I}{2\\pi r} \\text{ [AT/m]} \\)<br>원형 코일(중심): \\( H = \\frac{NI}{2r} \\text{ [AT/m]} \\)" },
+                    { q: "전류에 의한 자계 (2)<br>솔레노이드", a: "무한장 솔레노이드: \\( H = \\frac{NI}{l} = nI \\text{ [AT/m]} \\)<br>환상 솔레노이드: \\( H = \\frac{NI}{2\\pi r} \\text{ [AT/m]} \\)" },
+		    { q: "축적되는 에너지<br>전장 (W) vs 자장 (W)", a: "전장: \\(W = \\frac{1}{2}VQ = \\frac{1}{2} C V^2 = \\frac{Q^2}{2C} \\text{ [J]} \\)<br>자장: \\(W = \\frac{1}{2} I \\lambda = \\frac{1}{2} L I^2 = \\frac{\\lambda^2}{2L} \\text{ [J]} \\)" },
+                    { q: "에너지 밀도 (체적당)<br>전계 (w) vs 자계 (w)", a: "전계: \\( w = \\frac{1}{2}DE = \\frac{1}{2}\\varepsilon E^2 = \\frac{D^2}{2\\varepsilon} [J/m^3] \\)<br>자계: \\( w = \\frac{1}{2}BH = \\frac{1}{2}\\mu H^2 = \\frac{B^2}{2\\mu} [J/m^3] \\)" },
+                    { q: "전기회로 vs 자기회로<br>옴의 법칙 대응", a: "전기: \\( I = \\frac{V}{R} \\) (전류)<br>자기: \\( \\phi = \\frac{F}{R_m} \\) (자속)" },
+                    { q: "자기저항 (Reluctance)", a: "\\( R_m = \\frac{l}{\\mu A} \\text{ [AT/wb]} \\)" },
+                    { q: "전자력 (힘의 크기)<br>플레밍의 왼손 법칙", a: "전동기(모터) 원리<br>\\( F = BIl \\sin\\theta \\text{ [N]} \\)" },
+                    { q: "평행 도선 사이의 힘", a: "\\( F = \\frac{2I_1 I_2}{r} \\times 10^{-7} \\text{ [N/m]} \\)<br>같은 방향: <strong>흡인력</strong>, 반대 방향: <strong>반발력</strong>" },
+                    { q: "유도기전력 (도체 운동)<br>플레밍 오른손 법칙", a: "발전기 원리<br>\\( e = Blv \\sin\\theta \\text{ [V]} \\)" },
+                    { q: "유도기전력 (패러데이)", a: "\\( e = -N \\frac{d\\phi}{dt} = -L \\frac{di}{dt} \\text{ [V]} \\)<br>(-부호: 렌츠의 법칙, 방해 방향)" },
+                    { q: "자기인덕턴스 (L) vs 상호인덕턱스 (M)", a: "\\( L I= N\\phi \\)<br> \\( L = \\frac{\\mu A N^2}{l} \\text{ [H]} \\)<br> \\( M = \\frac{\\mu A N_1 N_2}{l} \\text{ [H]} \\)<br> \\(M = k \\sqrt{L_1 L_2} \\text{ [H]} \\)" },
+                    { q: "인덕턴스의 합성", a: "가동: \\( L = L_1 + L_2 + 2M \\text{ [H]} \\)<br>차동: \\( L = L_1 + L_2 - 2M \\text{ [H]} \\)" },
+                    { q: "자기 모멘트 (M)와 토크 (T)", a: "\\( M = ml \\text{ [wb}\\cdot\\text{m]} \\)<br>\\( T = MH \\sin\\theta \\text{ [N}\\cdot\\text{m]} \\)" }
+                ]
+            },
+
+            // [3] 교류/3상 (Purple Theme)
+            ac: {
+                color: "#6610f2",
+                title: "교류회로 및 3상 핵심",
+                data: [
+                    { q: "주기 (T)와 주파수 (f)<br>관계식", a: "주기: 1회 반복 시간, 주파수: 1초당 반복 횟수<br>\\( f = \\frac{1}{T} \\text{ [Hz]}, \\quad T = \\frac{1}{f} \\text{ [s]} \\)" },
+                    { q: "각속도 (ω) 공식", a: "\\( \\omega = 2\\pi f \\text{ [rad/sec]} \\)" },
+                    { q: "정현파의 실효값 (E)과<br>평균값 (\\(E_a \\)), 최대값 (\\(E_m \\))", a: "실효값: \\( E = \\frac{E_m}{\\sqrt{2}} \\approx 0.707 E_m \\)<br>평균값: \\( E_a = \\frac{2E_m}{\\pi} \\approx 0.637 E_m \\)<br>최대값: \\(E_m = \\sqrt{2} E \\approx 1.414E \\)" },
+                    { q: "파고율과 파형율 공식", a: "파고율: \\( \\frac{\\text{최대값}}{\\text{실효값}} = \\sqrt{2} \\approx 1.414 \\)<br>파형율: \\( \\frac{\\text{실효값}}{\\text{평균값}} = \\frac{\\pi}{2 \\sqrt{2}} \\approx 1.111 \\)" },
+                    { q: "임피던스 (Z)와 역률", a: "\\( Z = R + jX \\)<br>크기: \\( |Z| = \\sqrt{R^2 + X^2} \\)<br>역률: \\( \\cos\\theta = \\frac{R}{Z} \\)" },
+                    { q: "L만의 회로 (인덕턴스)<br>위상 및 리액턴스", a: "전류가 전압보다 90도 늦다 (지상)<br>\\( X_L = 2\\pi fL [\\Omega] \\)" },
+                    { q: "C만의 회로 (커패시턴스)<br>위상 및 리액턴스", a: "전류가 전압보다 90도 빠르다 (진상)<br>\\( X_C = \\frac{1}{2\\pi fC} [\\Omega] \\)" },
+                    { q: "R-L-C 직렬 공진<br>조건 및 주파수", a: "조건: \\( X_L = X_C \\)<br>공진주파수: \\( f_0 = \\frac{1}{2\\pi\\sqrt{LC}} \\)" },
+                    { q: "교류 전력 3가지", a: "유효전력: \\( P = VI\\cos\\theta \\text{ [W]} \\)<br>무효전력: \\( P_r = VI\\sin\\theta \\text{ [var]} \\)<br>피상전력: \\( P_a = VI \\text{ [VA]} \\)" },
+                    { q: "3상 Y결선 (성형결선)<br>전압/전류 관계", a: "선간전압 = \\( \\sqrt{3} \\) 상전압 (\\( 30^\\circ \\) 앞섬)<br>선전류 = 상전류" },
+                    { q: "3상 Δ결선 (델타결선)<br>전압/전류 관계", a: "선간전압 = 상전압<br>선전류 = \\( \\sqrt{3} \\) 상전류 (\\( 30^\\circ \\) 뒤짐)" },
+                    { q: "3상 소비전력 공식", a: "\\( P = \\sqrt{3} V_l I_l \\cos\\theta \\text{ [W]} \\)" },
+		    { q: "3상평형 시<br>소비전력", a: "\\(\\Delta → Y : \\frac{1}{3} 배 \\)<br>\\(Y → \\Delta : 3 배 \\)" },
+                    { q: "V결선 이용률과 출력비", a: "이용률: \\( \\frac{\\sqrt{3} V I }{2 V I} = 0.866 \\)<br>출력비: \\( \\frac{\\sqrt{3}VI}{3VI} = 0.577 \\)" },
+                    { q: "2전력계법 (3상 전력 측정)", a: "유효전력: \\( P = P_1 + P_2 \\)<br>무효전력: \\(P_r = \\sqrt{3} (P_1 - P_2) \\)<br>역률: \\( \\cos\\theta = \\frac{P_1 + P_2}{2\\sqrt{P_1^2 + P_2^2 - P_1 P_2}} \\)" },
+                    { q: "비정현파의 실효값", a: "실효값 = 각 고조파 실효값 제곱의 합의 제곱근" },
+                    { q: "왜형률 (일그러짐 정도)", a: "\\( \\text{왜형률} = \\frac{\\sqrt{\\sum \\text{고조파}^2}}{\\text{기본파}} \\)" },
+                    { q: "과도현상 시정수 (τ)", a: "R-L 회로: \\( \\tau = \\frac{L}{R} \\text{ [s]} \\)<br>R-C 회로: \\( \\tau = RC \\text{ [s]} \\)" }
+                ]
+            }
+        };
+
+        // -------------------- 상태 관리 --------------------
+        let currentTab = 'theory';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        const card = document.getElementById('flashcard');
+        const cardQ = document.getElementById('cardQ');
+        const cardA = document.getElementById('cardA');
+        const cardIndex = document.getElementById('cardIndex');
+        const cardIndexBack = document.getElementById('cardIndexBack');
+        const progressDisplay = document.getElementById('progressDisplay');
+        const chapterTitle = document.getElementById('chapterTitle');
+
+        // -------------------- 기능 구현 --------------------
+        function switchTab(tabName) {
+            currentTab = tabName;
+            currentIndex = 0;
+            isFlipped = false;
+            card.classList.remove('flipped');
+
+            // 탭 스타일 업데이트
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // 테마 색상 적용
+            const themeColor = datasets[tabName].color;
+            document.documentElement.style.setProperty('--primary-color', themeColor);
+            chapterTitle.textContent = datasets[tabName].title;
+
+            renderCard();
+        }
+
+        function renderCard() {
+            const data = datasets[currentTab].data;
+            const item = data[currentIndex];
+
+            // 내용 업데이트
+            cardQ.innerHTML = item.q;
+            cardA.innerHTML = item.a;
+
+            // 번호 업데이트
+            const idxText = `${currentIndex + 1} / ${data.length}`;
+            cardIndex.textContent = `Q ${idxText}`;
+            cardIndexBack.textContent = `A ${idxText}`;
+            progressDisplay.textContent = idxText;
+
+            // MathJax 렌더링 호출
+            if (window.MathJax) {
+                MathJax.typesetPromise([cardQ, cardA]).catch((err) => console.log(err));
+            }
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            card.classList.toggle('flipped');
+        }
+
+        function nextCard(e) {
+            if(e) e.stopPropagation();
+            const dataLen = datasets[currentTab].data.length;
+
+            if (currentIndex < dataLen - 1) {
+                if (isFlipped) {
+                    flipCard(); // 카드 뒤집힌 상태면 원복
+                    setTimeout(() => {
+                        currentIndex++;
+                        renderCard();
+                    }, 300);
+                } else {
+                    currentIndex++;
+                    renderCard();
+                }
+            } else {
+                alert("마지막 카드입니다. 전기기능사 합격을 기원합니다.");
+            }
+        }
+
+        function prevCard(e) {
+            if(e) e.stopPropagation();
+
+            if (currentIndex > 0) {
+                if (isFlipped) {
+                    flipCard();
+                    setTimeout(() => {
+                        currentIndex--;
+                        renderCard();
+                    }, 300);
+                } else {
+                    currentIndex--;
+                    renderCard();
+                }
+            } else {
+                alert("첫 번째 카드입니다.");
+            }
+        }
+
+        // 키보드 이벤트
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "ArrowRight") nextCard();
+            if (e.key === "ArrowLeft") prevCard();
+            if (e.key === " " || e.key === "Enter") flipCard();
+        });
+
+        // 초기 실행
+        renderCard();
+    </script>
+</body>
+</html>
