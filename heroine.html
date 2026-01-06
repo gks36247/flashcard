@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일본어 종합 퀴즈: 히로인 (전체 74문제)</title>
+    <style>
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .quiz-container {
+            background-color: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .score-badge {
+            background-color: #4a90e2;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        /* 문제 유형 라벨 */
+        .type-label {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .type-meaning { background-color: #e3f2fd; color: #1565c0; }
+        .type-blank { background-color: #fff3e0; color: #e65100; }
+        .type-order { background-color: #e8f5e9; color: #2e7d32; }
+
+        .question-area {
+            margin-bottom: 30px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .question-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .sub-text {
+            font-size: 1em;
+            color: #777;
+        }
+
+        /* 객관식 버튼 */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .option-btn {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 1.1em;
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-btn:hover { background-color: #e2e6ea; }
+        .option-btn.correct { background-color: #d4edda; border-color: #28a745; color: #155724; }
+        .option-btn.wrong { background-color: #f8d7da; border-color: #dc3545; color: #721c24; }
+
+        /* 문장 배열 */
+        .scramble-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .word-chip {
+            padding: 10px 15px;
+            background-color: white;
+            border: 2px solid #4a90e2;
+            color: #4a90e2;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .word-chip:hover {
+            transform: translateY(-2px);
+            background-color: #e3f2fd;
+        }
+        .word-chip.used {
+            opacity: 0.3;
+            cursor: default;
+            transform: none;
+            border-color: #ccc;
+            color: #ccc;
+        }
+        
+        .answer-box {
+            min-height: 50px;
+            border-bottom: 2px solid #ddd;
+            margin: 10px 0 20px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            padding: 5px;
+        }
+        .answer-chip {
+            padding: 5px 12px;
+            background-color: #4a90e2;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .feedback-area {
+            margin-top: 20px;
+            display: none;
+        }
+        .feedback-msg {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .next-btn {
+            padding: 12px 40px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        .reset-btn {
+            padding: 8px 16px;
+            background-color: #999;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 500px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .question-text { font-size: 1.3em; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <div class="header" id="quiz-header">
+            <span id="progress">문제 1 / 74</span>
+            <div class="score-badge" id="score">점수: 0</div>
+        </div>
+
+        <div id="quiz-content"></div>
+
+        <div class="feedback-area" id="feedback">
+            <div class="feedback-msg" id="feedback-msg"></div>
+            <div id="feedback-detail" style="margin-bottom:15px; color:#555;"></div>
+            <button class="next-btn" onclick="nextQuestion()">다음 문제 ▶</button>
+        </div>
+    </div>
+
+    <script>
+        // 74개 단어와 예문 데이터 (오류 수정됨)
+        const vocabData = [
+            { word: "君", reading: "きみ", meaning: "너, 그대", sentence: "君のことが好きだ。", trans: "너를 좋아해." },
+            { word: "毎日", reading: "まいにち", meaning: "매일", sentence: "毎日日本語を勉強する。", trans: "매일 일본어를 공부해." },
+            { word: "僕", reading: "ぼく", meaning: "나 (남성)", sentence: "僕は学生です。", trans: "저는 학생입니다." },
+            { word: "似合う", reading: "にあう", meaning: "어울리다", sentence: "その眼鏡はよく似合う。", trans: "그 안경은 잘 어울려." },
+            { word: "白い", reading: "しろい", meaning: "하얗다", sentence: "白いシャツを着る。", trans: "하얀 셔츠를 입다." },
+            { word: "空", reading: "そら", meaning: "하늘", sentence: "空が青い。", trans: "하늘이 파랗다." },
+            { word: "雪", reading: "ゆき", meaning: "눈", sentence: "雪が降ってきた。", trans: "눈이 내리기 시작했다." },
+            { word: "落ちる", reading: "おちる", meaning: "떨어지다", sentence: "葉っぱが落ちる。", trans: "나뭇잎이 떨어진다." },
+            { word: "別に", reading: "べつに", meaning: "별로", sentence: "別に何でもないよ。", trans: "별일 아니야." },
+            { word: "吐き出す", reading: "はきだす", meaning: "내뱉다", sentence: "ため息を吐き出す。", trans: "한숨을 내뱉다." },
+            { word: "ため息", reading: "ためいき", meaning: "한숨", sentence: "大きなため息をつく。", trans: "큰 한숨을 쉬다." },
+            { word: "少し", reading: "すこし", meaning: "조금", sentence: "少し疲れました。", trans: "조금 피곤합니다." },
+            { word: "残る", reading: "のこる", meaning: "남다", sentence: "記憶に残る。", trans: "기억에 남다." }, // 수정됨
+            { word: "寂しい", reading: "さびしい", meaning: "쓸쓸하다", sentence: "一人で寂しい。", trans: "혼자라 쓸쓸하다." },
+            { word: "消える", reading: "きえる", meaning: "사라지다", sentence: "信号が消える。", trans: "신호가 사라지다(꺼지다)." }, // 수정됨
+            { word: "街", reading: "まち", meaning: "거리", sentence: "賑やかな街を歩く。", trans: "번화한 거리를 걷다." },
+            { word: "降る", reading: "ふる", meaning: "내리다", sentence: "雨が降る。", trans: "비가 내리다." },
+            { word: "今", reading: "いま", meaning: "지금", sentence: "今は忙しいです。", trans: "지금은 바쁩니다." },
+            { word: "隣", reading: "となり", meaning: "옆", sentence: "隣の家に住む。", trans: "옆집에 살다." },
+            { word: "綺麗", reading: "きれい", meaning: "예쁘다", sentence: "花が綺麗に咲いた。", trans: "꽃이 예쁘게 피었다." },
+            { word: "笑う", reading: "わらう", meaning: "웃다", sentence: "大声で笑う。", trans: "큰 소리로 웃다." },
+            { word: "寒い", reading: "さむい", meaning: "춥다", sentence: "外はとても寒い。", trans: "밖은 매우 춥다." },
+            { word: "嬉しい", reading: "うれしい", meaning: "기쁘다", sentence: "プレゼントをもらって嬉しい。", trans: "선물을 받아서 기쁘다." },
+            { word: "転ぶ", reading: "ころぶ", meaning: "넘어지다", sentence: "雪道で転ぶ。", trans: "눈길에서 넘어지다." }, // 수정됨
+            { word: "掴む", reading: "つかむ", meaning: "잡다", sentence: "チャンスを掴む。", trans: "기회를 잡다." },
+            { word: "手", reading: "て", meaning: "손", sentence: "手を繋ぐ。", trans: "손을 잡다." },
+            { word: "先", reading: "さき", meaning: "앞, 끝", sentence: "お先に失礼します。", trans: "먼저 실례하겠습니다." },
+            { word: "楽しい", reading: "たのしい", meaning: "즐겁다", sentence: "旅行は楽しい。", trans: "여행은 즐겁다." },
+            { word: "気付く", reading: "きづく", meaning: "깨닫다", sentence: "間違いに気付く。", trans: "실수를 깨닫다." },
+            { word: "辺り", reading: "あたり", meaning: "주변", sentence: "辺りが暗くなる。", trans: "주변이 어두워지다." },
+            { word: "ほとんど", reading: "", meaning: "대부분", sentence: "宿題はほとんど終わった。", trans: "숙제는 대부분 끝났다." },
+            { word: "染まる", reading: "そまる", meaning: "물들다", sentence: "夕日で赤く染まる。", trans: "석양으로 붉게 물들다." },
+            { word: "散らかる", reading: "ちらかる", meaning: "어지러지다", sentence: "部屋が散らかる。", trans: "방이 어지러지다." },
+            { word: "忘れる", reading: "わすれる", meaning: "잊다", sentence: "嫌なことを忘れる。", trans: "싫은 일을 잊다." }, // 수정됨
+            { word: "意外と", reading: "いがいと", meaning: "의외로", sentence: "彼は意外と優しい。", trans: "그는 의외로 상냥하다." },
+            { word: "積もる", reading: "つもる", meaning: "쌓이다", sentence: "雪が積もる。", trans: "눈이 쌓이다." },
+            { word: "メール", reading: "めーる", meaning: "메일", sentence: "メールを送る。", trans: "메일을 보내다." },
+            { word: "送る", reading: "おくる", meaning: "보내다", sentence: "荷物を送る。", trans: "짐을 보내다." },
+            { word: "打ちかけ", reading: "うちかけ", meaning: "치다 만", sentence: "打ちかけのメール。", trans: "쓰다 만 메일." },
+            { word: "ポケット", reading: "ぽけっと", meaning: "주머니", sentence: "ポケットに手を入れる。", trans: "주머니에 손을 넣다." },
+            { word: "入れる", reading: "いれる", meaning: "넣다", sentence: "珈琲に砂糖を入れる。", trans: "커피에 설탕을 넣다." },
+            { word: "好む", reading: "このむ", meaning: "좋아하다", sentence: "静かな場所を好む。", trans: "조용한 장소를 좋아하다." },
+            { word: "強い", reading: "つよい", meaning: "강하다", sentence: "風が強い。", trans: "바람이 강하다." },
+            { word: "優しい", reading: "やさしい", meaning: "상냥하다", sentence: "優しい人になりたい。", trans: "상냥한 사람이 되고 싶다." },
+            { word: "変わる", reading: "かわる", meaning: "변하다", sentence: "信号が変わる。", trans: "신호가 바뀌다." },
+            { word: "出す", reading: "だす", meaning: "내다", sentence: "ゴミを出す。", trans: "쓰레기를 내다." },
+            { word: "答え", reading: "こたえ", meaning: "대답", sentence: "答えが分からない。", trans: "정답을 모르겠다." },
+            { word: "胸", reading: "むね", meaning: "가슴", sentence: "胸が痛い。", trans: "가슴이 아프다." },
+            { word: "痛い", reading: "いたい", meaning: "아프다", sentence: "頭が痛い。", trans: "머리가 아프다." },
+            { word: "渡す", reading: "わたす", meaning: "건네다", sentence: "手紙を渡す。", trans: "편지를 건네다." },
+            { word: "捨てる", reading: "すてる", meaning: "버리다", sentence: "ゴミを捨てる。", trans: "쓰레기를 버리다." },
+            { word: "分かる", reading: "わかる", meaning: "알다", sentence: "意味が分かる。", trans: "의미를 알다." },
+            { word: "景色", reading: "けしき", meaning: "경치", sentence: "景色が綺麗だ。", trans: "경치가 예쁘다." },
+            { word: "ただ", reading: "", meaning: "그저", sentence: "ただ君に会いたい。", trans: "그저 너를 만나고 싶어." },
+            { word: "怯える", reading: "おびえる", meaning: "겁내다", sentence: "犬に怯える。", trans: "개를 무서워하다." },
+            { word: "思う", reading: "おもう", meaning: "생각하다", sentence: "そう思う。", trans: "그렇게 생각한다." },
+            { word: "映画", reading: "えいが", meaning: "영화", sentence: "映画を観に行く。", trans: "영화를 보러 가다." },
+            { word: "観る", reading: "みる", meaning: "보다", sentence: "テレビを観る。", trans: "텔레비전을 보다." },
+            { word: "小説", reading: "しょうせつ", meaning: "소설", sentence: "小説を読む。", trans: "소설을 읽다." },
+            { word: "音楽", reading: "おんがく", meaning: "음악", sentence: "音楽を聴く。", trans: "음악을 듣다." },
+            { word: "ヒロイン", reading: "ひろいん", meaning: "여주인공", sentence: "映画のヒロイン。", trans: "영화의 여주인공." },
+            { word: "重ねる", reading: "かさねる", meaning: "겹치다", sentence: "皿を重ねる。", trans: "접시를 겹치다." }, // 수정됨
+            { word: "行く", reading: "いく", meaning: "가다", sentence: "学校へ行く。", trans: "학교에 가다." },
+            { word: "遠い", reading: "とおい", meaning: "멀다", sentence: "駅は遠い。", trans: "역은 멀다." },
+            { word: "場所", reading: "ばしょ", meaning: "장소", sentence: "約束の場所。", trans: "약속 장소." },
+            { word: "夜空", reading: "よぞら", meaning: "밤하늘", sentence: "夜空の星。", trans: "밤하늘의 별." },
+            { word: "描く", reading: "えがく", meaning: "그리다", sentence: "夢を描く。", trans: "꿈을 그리다." },
+            { word: "見慣れる", reading: "みなれる", meaning: "눈에 익다", sentence: "都会の景色に見慣れる。", trans: "도시 풍경에 익숙해지다." }, // 수정됨
+            { word: "馬鹿", reading: "ばか", meaning: "바보", sentence: "馬鹿なことをした。", trans: "바보 같은 짓을 했다." },
+            { word: "誰", reading: "だれ", meaning: "누구", sentence: "誰ですか？", trans: "누구입니까?" },
+            { word: "会う", reading: "あう", meaning: "만나다", sentence: "友達に会う。", trans: "친구를 만나다." },
+            { word: "言う", reading: "いう", meaning: "말하다", sentence: "ありがとうと言う。", trans: "고맙다고 말하다." },
+            { word: "やっぱり", reading: "", meaning: "역시", sentence: "やっぱりそうだ。", trans: "역시 그렇다." },
+            { word: "全部", reading: "ぜんぶ", meaning: "전부", sentence: "全部食べた。", trans: "전부 먹었다." }
+        ];
+
+        let quizQueue = [];
+        let currentQuizIndex = 0;
+        let score = 0;
+        let isAnswered = false;
+        
+        const totalQuestions = vocabData.length; 
+
+        const contentDiv = document.getElementById('quiz-content');
+        const feedbackDiv = document.getElementById('feedback');
+        const feedbackMsg = document.getElementById('feedback-msg');
+        const feedbackDetail = document.getElementById('feedback-detail');
+        const scoreEl = document.getElementById('score');
+        const progressEl = document.getElementById('progress');
+        const headerEl = document.getElementById('quiz-header');
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function initQuiz() {
+            // 헤더 보이기 (재시작 시)
+            headerEl.style.display = 'flex';
+
+            const shuffledData = shuffle([...vocabData]);
+            quizQueue = shuffledData.map(item => {
+                const type = Math.floor(Math.random() * 3);
+                return { ...item, type: type };
+            });
+
+            currentQuizIndex = 0;
+            score = 0;
+            updateStatus();
+            loadQuestion();
+        }
+
+        function updateStatus() {
+            scoreEl.textContent = `점수: ${score}`;
+            progressEl.textContent = `문제 ${currentQuizIndex + 1} / ${totalQuestions}`;
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            feedbackDiv.style.display = 'none';
+            contentDiv.innerHTML = '';
+
+            if (currentQuizIndex >= totalQuestions) {
+                finishQuiz();
+                return;
+            }
+
+            const q = quizQueue[currentQuizIndex];
+            
+            if (q.type === 0) renderTypeMeaning(q);
+            else if (q.type === 1) renderTypeBlank(q);
+            else if (q.type === 2) renderTypeOrder(q);
+        }
+
+        // [Type 0] 단어 뜻 맞히기
+        function renderTypeMeaning(q) {
+            contentDiv.innerHTML = `
+                <div class="type-label type-meaning">단어 뜻 맞히기</div>
+                <div class="question-area">
+                    <div class="question-text">${q.word}</div>
+                    <div class="sub-text">${q.reading ? `(${q.reading})` : ''}</div>
+                </div>
+                <div class="options-grid" id="options"></div>
+            `;
+            
+            const distractors = shuffle(vocabData.filter(v => v.word !== q.word)).slice(0, 3);
+            const options = shuffle([q, ...distractors]);
+
+            const optionsContainer = document.getElementById('options');
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt.meaning;
+                btn.onclick = () => checkAnswer(0, btn, opt, q);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // [Type 1] 빈칸 추론
+        function renderTypeBlank(q) {
+            const maskedSentence = q.sentence.replace(q.word, ' (   ) ');
+            
+            contentDiv.innerHTML = `
+                <div class="type-label type-blank">빈칸 추론</div>
+                <div class="question-area">
+                    <div class="question-text">${maskedSentence}</div>
+                    <div class="sub-text">${q.trans}</div>
+                </div>
+                <div class="options-grid" id="options"></div>
+            `;
+
+            const distractors = shuffle(vocabData.filter(v => v.word !== q.word)).slice(0, 3);
+            const options = shuffle([q, ...distractors]);
+
+            const optionsContainer = document.getElementById('options');
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<b>${opt.word}</b> <span style="font-size:0.8em">(${opt.reading || ''})</span>`;
+                btn.onclick = () => checkAnswer(1, btn, opt, q);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // [Type 2] 문장 배열
+        function renderTypeOrder(q) {
+            const len = q.sentence.length;
+            const splitPoint = Math.floor(len / 2);
+            let parts = [q.sentence.substring(0, splitPoint), q.sentence.substring(splitPoint)];
+            if (len > 6) { 
+                 parts = [
+                     q.sentence.substring(0, Math.floor(len/3)),
+                     q.sentence.substring(Math.floor(len/3), Math.floor(2*len/3)),
+                     q.sentence.substring(Math.floor(2*len/3))
+                 ];
+            }
+            
+            const shuffledParts = shuffle([...parts.map((p, i) => ({ text: p, index: i }))]);
+            
+            contentDiv.innerHTML = `
+                <div class="type-label type-order">문장 완성하기</div>
+                <div class="question-area" style="min-height:auto;">
+                    <div class="sub-text" style="margin-bottom:10px;">다음 뜻이 되도록 단어를 순서대로 누르세요.</div>
+                    <div class="question-text" style="font-size:1.2em;">"${q.trans}"</div>
+                </div>
+                
+                <div class="answer-box" id="answer-box"></div>
+                <div class="scramble-container" id="scramble-box"></div>
+                
+                <div style="margin-top:20px;">
+                    <button class="reset-btn" onclick="resetOrder()">다시 하기</button>
+                    <button class="next-btn" style="padding:10px 20px; font-size:0.9em; background-color:#4a90e2;" onclick="checkOrderAnswer()">정답 확인</button>
+                </div>
+            `;
+
+            const scrambleBox = document.getElementById('scramble-box');
+            window.currentOrderParts = shuffledParts;
+            window.userOrder = [];
+            window.correctString = q.sentence;
+            window.currentQ = q;
+
+            shuffledParts.forEach((part, idx) => {
+                const chip = document.createElement('div');
+                chip.className = 'word-chip';
+                chip.textContent = part.text;
+                chip.dataset.idx = idx;
+                chip.onclick = () => addToAnswer(idx, part.text, chip);
+                scrambleBox.appendChild(chip);
+            });
+        }
+
+        function addToAnswer(idx, text, chipElem) {
+            if (chipElem.classList.contains('used')) return;
+            chipElem.classList.add('used');
+            window.userOrder.push(text);
+            
+            const ansBox = document.getElementById('answer-box');
+            const ansChip = document.createElement('div');
+            ansChip.className = 'answer-chip';
+            ansChip.textContent = text;
+            ansBox.appendChild(ansChip);
+        }
+
+        function resetOrder() {
+            window.userOrder = [];
+            document.getElementById('answer-box').innerHTML = '';
+            const chips = document.querySelectorAll('.word-chip');
+            chips.forEach(c => c.classList.remove('used'));
+        }
+
+        function checkOrderAnswer() {
+            if (isAnswered) return;
+            isAnswered = true;
+            
+            const userString = window.userOrder.join('');
+            const isCorrect = (userString === window.correctString);
+            
+            showFeedback(isCorrect, window.correctString, window.currentQ.trans);
+            if (isCorrect) score++;
+            updateStatus();
+        }
+
+        function checkAnswer(type, btnElem, selectedOpt, questionOpt) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const isCorrect = (selectedOpt.word === questionOpt.word);
+            
+            if (isCorrect) {
+                btnElem.classList.add('correct');
+                score++;
+            } else {
+                btnElem.classList.add('wrong');
+                const buttons = document.querySelectorAll('.option-btn');
+                buttons.forEach(b => {
+                    if (type === 0 && b.textContent === questionOpt.meaning) b.classList.add('correct');
+                    if (type === 1 && b.innerHTML.includes(questionOpt.word)) b.classList.add('correct');
+                });
+            }
+            
+            updateStatus();
+            showFeedback(isCorrect, `${questionOpt.word} : ${questionOpt.sentence}`, questionOpt.trans);
+        }
+
+        function showFeedback(isCorrect, correctText, subText) {
+            feedbackDiv.style.display = 'block';
+            if (isCorrect) {
+                feedbackMsg.textContent = "⭕ 정답입니다!";
+                feedbackMsg.style.color = "#28a745";
+            } else {
+                feedbackMsg.textContent = "❌ 틀렸습니다.";
+                feedbackMsg.style.color = "#dc3545";
+            }
+            feedbackDetail.innerHTML = `<div style="font-size:1.2em; font-weight:bold;">${correctText}</div><div>${subText}</div>`;
+        }
+
+        function nextQuestion() {
+            currentQuizIndex++;
+            updateStatus();
+            loadQuestion();
+        }
+
+        function finishQuiz() {
+            // 결과 화면에서는 헤더 숨김
+            headerEl.style.display = 'none';
+
+            contentDiv.innerHTML = `
+                <div style="padding:40px;">
+                    <div style="font-size:3em; margin-bottom:20px;">🎉</div>
+                    <h2>모든 문제를 풀었습니다!</h2>
+                    <p style="font-size:1.2em; color:#555;">
+                        총 ${totalQuestions}문제 중 <strong style="color:#4a90e2;">${score}</strong>개를 맞췄습니다.
+                    </p>
+                    <button class="next-btn" onclick="initQuiz()">처음부터 다시 하기</button>
+                </div>
+            `;
+            feedbackDiv.style.display = 'none';
+        }
+
+        initQuiz();
+
+    </script>
+</body>
+</html>
