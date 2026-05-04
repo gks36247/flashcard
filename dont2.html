@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전기기사 2010년도 통합 암기 카드</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #4a90e2; 
+            --secondary-color: #f0f2f5;
+            --text-color: #333;
+            --card-bg: #fff;
+        }
+
+        body {
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+            background-color: var(--secondary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 0.3s;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            z-index: 100;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #ddd;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-title { text-align: center; margin-bottom: 20px; }
+        .header-title h1 { margin: 0; font-size: 1.5rem; }
+
+        .card-container {
+            position: relative;
+            width: 90%;
+            max-width: 650px;
+            height: 400px;
+            perspective: 1000px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .card.flipped { transform: rotateY(180deg); }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: center;
+            border-radius: 16px;
+            background-color: var(--card-bg);
+        }
+
+        .card-front { border: 3px solid var(--primary-color); }
+        .card-back {
+            background-color: var(--primary-color);
+            color: white;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+        }
+
+        .card-number { position: absolute; top: 15px; left: 20px; font-weight: bold; }
+        
+        .content-box { font-size: 1.1em; line-height: 1.6; word-break: keep-all; }
+        h2 { font-size: 1.3em; margin-bottom: 10px; word-break: keep-all; }
+
+        .controls { display: flex; align-items: center; gap: 20px; }
+        .ctrl-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background-color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 600px) { .card-container { height: 450px; } }
+    </style>
+</head>
+<body>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('session1')">10년 1회</button>
+        <button class="tab-btn" onclick="switchTab('session2')">10년 2회</button>
+        <button class="tab-btn" onclick="switchTab('session3')">10년 3회</button>
+    </div>
+
+    <div class="header-title">
+        <h1 id="chapterTitle">2010년 1회 기출 요약</h1>
+    </div>
+
+    <div class="card-container" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-front">
+                <div class="card-number" id="cardIndex">Q 1</div>
+                <h2 id="cardQ">로딩중...</h2>
+            </div>
+            <div class="card-face card-back">
+                <div class="card-number" id="cardIndexBack">A 1</div>
+                <div id="cardA" class="content-box">로딩중...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="ctrl-btn" onclick="prevCard(event)">← 이전</button>
+        <div id="progressDisplay">1 / 27</div>
+        <button class="ctrl-btn" onclick="nextCard(event)">다음 →</button>
+    </div>
+
+    <script>
+        const datasets = {
+            session1: {
+                color: "#4a90e2",
+                title: "2010년 1회 기출 요약",
+                data: [
+                    { q: "도체면상의 점 P(2,-4,5)에서 전계 \\(E=3a_x-6a_y+2a_z\\)일 때 법선 \\(E_n\\)과 접선 \\(E_t\\)의 크기는?", a: "도체면에는 수직한 전기장이 나가므로 접선 성분 \\(E_t = 0\\), 법선 성분 \\(E_n = \\sqrt{3^2+(-6)^2+2^2} = 7\\)" },
+                    { q: "자유공간 전파 \\(E(z,t)=10^3 \\sin(\\omega t - \\beta z)a_y\\)일 때 자파는?", a: "특성임피던스 \\(120\\pi\\) 이용. 크기: \\(10^3 / 120\\pi\\), 방향: \\(-a_x\\) (z에서 y로 감아쥘 때 엄지 방향)" },
+                    { q: "GPT 2차측 전압 (1선 지락사고 시)", a: "지락 시 전압은 변압기 2차측 전압의 3배" },
+                    { q: "동기조상기 vs 전력용 콘덴서 이점", a: "동기조상기: 진·지상 양용, 연속 조정 가능<br>전력용 콘덴서: 단락 시 고장전류가 흐르지 않음" },
+                    { q: "직접 접지 방식 채택 이유 (초고압)", a: "전압 상승이 적어 절연 레벨을 낮출 수 있음" },
+                    { q: "단열 변화 시 T-S 그래프 형태", a: "열교환이 없으므로 엔트로피 변화 없음. T-S 상에서 수직선" },
+                    { q: "직렬리액터 용량 (제5고조파 제거)", a: "\\(L = \\frac{1}{(10\\pi f)^2 C}\\) 꼴 (5차 고조파 주파수 5\\(\\omega\\)에 맞춤)" },
+                    { q: "소호리액터 공진 리액턴스 (3상)", a: "3상이 병렬 연결된 것으로 보아 \\(\\omega L = \\frac{1}{3\\omega C}\\)" },
+                    { q: "표피 효과가 큰 조건", a: "굵기, 도전율, 투자율, 주파수가 모두 클 때" },
+                    { q: "과전류계전기(OCR)의 특성", a: "반한시 계전기 (동작전류가 클수록 동작시간이 짧아짐)" },
+                    { q: "직류전동기 정출력 제어법", a: "계자제어법" },
+                    { q: "변압기 철손 변화 (주파수 3%↑, 전압 3%↓)", a: "철손은 \\(E^2\\) 비례, \\(f\\) 반비례. \\(1 - \\frac{(1-0.03)^2}{1+0.03}\\) 만큼 감소" },
+                    { q: "4극 60Hz, 슬립 5%, 2차 손실 94.25W일 때 토크?", a: "\\(T = 9.55 \\times \\frac{P_2}{N_s} = 10 [N\\cdot m]\\)" },
+                    { q: "서보전동기 제어방식이 아닌 것", a: "릴럭턴스의 전압제어" },
+                    { q: "3단자 사이리스터가 아닌 것", a: "SCS (4단자 소자). GTO는 3단자임" },
+                    { q: "정류자형 주파수 변환기 설명 중 틀린 것", a: "농형 유도전동기의 2차 여자를 할 수 있다 (X) -> 권선형에 사용" },
+                    { q: "타여자 직류전동기 토크 계산", a: "\\(E = V - I_a R_a\\), \\(T = 0.975 \\frac{EI_a}{N} = 1.25 [kg\\cdot m]\\)" },
+                    { q: "동기발전기 병렬운전 중 A의 여자를 강하게 하면?", a: "A발전기에 90도 지상 전류가 흐름 (감자작용 발생)" },
+                    { q: "3상 유도전동기 슬립 (출력 7.5kW, 2차 저항손 300W)", a: "\\(s = \\frac{P_{c2}}{P_2} = \\frac{300}{300+7500}\\)" },
+                    { q: "임피던스 와트 측정 시험", a: "단락시험" },
+                    { q: "단절권 계수 계산 (54슬롯, 6극, 1~8슬롯)", a: "극간격 9, 코일간격 7. 단절비 \\(7/9\\). 계수 \\(\\sin(\\frac{\\pi}{2} \\times \\frac{7}{9}) = 0.9397\\)" },
+                    { q: "분포권의 특징이 아닌 것", a: "집중권에 비해 합성 유기 기전력이 크다 (X. 실제로는 작아짐)" },
+                    { q: "나이퀴스트 선도 위치 (\\(G(j\\omega)=\\frac{K}{j\\omega(j\\omega+1)}\\))", a: "제3사분면 (-90도 ~ -180도)" },
+                    { q: "양의 실수부 근의 개수 (\\(S^3+2S^2+2S+40=0\\))", a: "루스표 부호 변화 2회 → 양의 실수부 근 2개" },
+                    { q: "근궤적의 수 결정", a: "극점과 영점 중 개수가 많은 쪽의 수" },
+                    { q: "시스템 안정도 판별법 (파라미터 변화)", a: "근 궤적법" },
+                    { q: "역률 개선용 콘덴서 용량 (3HP, 효율 90%, 역률 80% → 100%)", a: "\\(P(\\tan\\theta_1 - \\tan\theta_2)\\) 공식 이용" }
+                ]
+            },
+            session2: {
+                color: "#28a745",
+                title: "2010년 2회 기출 요약",
+                data: [
+                    { q: "무한평면도체-전자 간 위치에너지", a: "영상전하법 적용: \\(-\\frac{e}{16\\pi \\epsilon_0 r}\\)" },
+                    { q: "전력 조류계산의 목적이 아닌 것", a: "계통의 신뢰도 평가 (조류계산은 상태 파악 및 계획 수립용)" },
+                    { q: "원자로 감속재의 조건", a: "원자 질량이 작을수록 좋음 (고속 중성자 감속 목적)" },
+                    { q: "66kV 3상 리액턴스 26옴, 300A일 때 %X?", a: "\\(\\%X = \\frac{IX}{E} \\times 100\\) [%]" },
+                    { q: "파동임피던스 500옴일 때 L, C 관계", a: "\\(Z_0 = \\sqrt{\\frac{L}{C}} = 500\\). L/C 비율이 250,000인 값 찾기" },
+                    { q: "피뢰기 속류 차단 최고 전압", a: "정격전압" },
+                    { q: "동기전동기 위상 특성 곡선 (V곡선)", a: "\\(I_f - I\\) 곡선 (부하 P 일정 시 계자전류와 전기자전류 관계)" },
+                    { q: "전압 2/3배 시 기동 토크 변화", a: "토크는 전압의 제곱 비례. \\((2/3)^2 = 4/9\\)배. 기존 1.8배 → 0.8배" },
+                    { q: "직류분권전동기 기동저항 (200V, 50A, 0.3옴, 1.7배 제한)", a: "\\(I_s = \\frac{V}{R_a + R_s} = 85A\\) 에서 \\(R_s \\approx 2\\)" },
+                    { q: "차동복권발전기의 특성", a: "수하특성 (부하전류 증가 시 전압이 급격히 떨어짐)" },
+                    { q: "변압기 무부하/단락 시험으로 알 수 없는 것", a: "무부하: 철손, 여자 어드미턴스 / 단락: 동손, 임피던스, 전압변동률" },
+                    { q: "변압기 내부고장 보호 계전기", a: "차동계전기" },
+                    { q: "3상 유도전동기 전부하 회전수 (3000V, 60Hz, 8극, 동손3, 기계손2)", a: "동기속도 900. 슬립 \\(3/105\\). 회전수 \\(900(1-s) = 874.28\\)" },
+                    { q: "유기기전력과 전류가 동상인 전기자 반작용", a: "교차자화작용 (횡축 반작용)" },
+                    { q: "9가지 상태 표현에 필요한 플립플롭 개수", a: "4개 (\\(2^4 = 16\\)으로 9가지 커버 가능)" },
+                    { q: "절대값 및 위상각 (\\(G(j\\omega)=\\frac{K}{1+j\\omega T}\\))", a: "\\(abs = \\frac{K}{\\sqrt{1+(\omega T)^2}}\\), \\(\\angle = -\\tan^{-1}(\omega T)\\)" },
+                    { q: "무왜형 선로 조건", a: "\\(LG = RC\\)" },
+                    { q: "왜형률 계산 (기본100, 3고조40, 5고조30)", a: "\\(\\frac{\\sqrt{40^2+30^2}}{100} = 0.5\\)" }
+                ]
+            },
+            session3: {
+                color: "#6610f2",
+                title: "2010년 3회 기출 요약",
+                data: [
+                    { q: "154kV, 100MVA 기준 %리액턴스 (X=20옴)", a: "\\(\\%X = \\frac{PX}{10V^2} = \\frac{100,000 \\times 20}{10 \\times 154^2} \\approx 8.43\\%\\)" },
+                    { q: "단권변압기의 특징", a: "구리 사용량 적고 효율 높음. 단점은 누설 임피던스가 작아 단락사고 시 위험" },
+                    { q: "국내 220/380V 승압 방식", a: "3상 4선식 (전선 소모량 최소, 효율 최대)" },
+                    { q: "1선 충전전류 (154kV, 60Hz, 50km, \\(C_s, C_m\\))", a: "\\(C = C_s + 3C_m\\), \\(I_c = 2\\pi f C L \\frac{V}{\\sqrt{3}} \\approx 12.74A\\)" },
+                    { q: "압력수두 계산 (압력 9kg/cm², 유속 49m/s)", a: "\\(H = \\frac{P}{\\omega} = \\frac{90,000}{1000} = 90m\\)" },
+                    { q: "유효접지계통 피뢰기 정격 결정 요소", a: "1선 지락 시 건전상의 대지전위 상승분" },
+                    { q: "직류송전방식(HVDC)의 장점", a: "표피효과 없음, 절연설계 용이, 안정도 높음, 선로 건설비 저렴" },
+                    { q: "코로나 임계전압과 관계 깊은 것", a: "상대공기밀도 (비례 관계)" },
+                    { q: "동기발전기 난조 원인", a: "부하 급변, 원동기 토크 고조파, 조속기 과민, 관성 작음" },
+                    { q: "변압기 임피던스 전압의 정의", a: "2차 단락 후 정격전류가 흐를 때 1차에 가해진 전압" },
+                    { q: "유도전동기 2차 저항 제어법 장단점", a: "장점: 기동토크 증대, 전류 억제. 단점: 2차 동손 증가(에너지 손실)" },
+                    { q: "단상전파 정류 맥동률", a: "48% (참고: 단상반파 121%, 3상전파 4%)" },
+                    { q: "기계각 계산 (24극, 전기각 180도)", a: "\\(\\theta_m = \\frac{\\theta_e}{P/2} = \\frac{180}{12} = 15\\)도" },
+                    { q: "동기발전기 단락비 정의", a: "무부하시 정격전압 유도 계자전류 / 3상 단락시 정격전류 계자전류" },
+                    { q: "근궤적 범위 (\\(G(s)H(s)=\\frac{K(s+1)}{s(s+2)}\\))", a: "실수축 상 오른쪽 극점+영점 합이 홀수인 구간: (0 ~ -1), (-2 ~ \\(-\\infty\\))" }
+                ]
+            }
+        };
+
+        let currentTab = 'session1';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        const card = document.getElementById('flashcard');
+        const cardQ = document.getElementById('cardQ');
+        const cardA = document.getElementById('cardA');
+        const cardIndex = document.getElementById('cardIndex');
+        const cardIndexBack = document.getElementById('cardIndexBack');
+        const progressDisplay = document.getElementById('progressDisplay');
+        const chapterTitle = document.getElementById('chapterTitle');
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            currentIndex = 0;
+            isFlipped = false;
+            card.classList.remove('flipped');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const themeColor = datasets[tabName].color;
+            document.documentElement.style.setProperty('--primary-color', themeColor);
+            chapterTitle.textContent = datasets[tabName].title;
+
+            renderCard();
+        }
+
+        function renderCard() {
+            const data = datasets[currentTab].data;
+            const item = data[currentIndex];
+
+            cardQ.innerHTML = item.q;
+            cardA.innerHTML = item.a;
+
+            const idxText = `${currentIndex + 1} / ${data.length}`;
+            cardIndex.textContent = `Q ${idxText}`;
+            cardIndexBack.textContent = `A ${idxText}`;
+            progressDisplay.textContent = idxText;
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([cardQ, cardA]).catch((err) => console.log(err));
+            }
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            card.classList.toggle('flipped');
+        }
+
+        function nextCard(e) {
+            if(e) e.stopPropagation();
+            if (currentIndex < datasets[currentTab].data.length - 1) {
+                if (isFlipped) {
+                    flipCard();
+                    setTimeout(() => { currentIndex++; renderCard(); }, 300);
+                } else { currentIndex++; renderCard(); }
+            }
+        }
+
+        function prevCard(e) {
+            if(e) e.stopPropagation();
+            if (currentIndex > 0) {
+                if (isFlipped) {
+                    flipCard();
+                    setTimeout(() => { currentIndex--; renderCard(); }, 300);
+                } else { currentIndex--; renderCard(); }
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowRight") nextCard();
+            if (e.key === "ArrowLeft") prevCard();
+            if (e.key === " ") flipCard();
+        });
+
+        renderCard();
+    </script>
+</body>
+</html>
