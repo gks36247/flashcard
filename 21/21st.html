@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전기기사 2021년도 통합 암기 카드</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #4a90e2; 
+            --secondary-color: #f0f2f5;
+            --text-color: #333;
+            --card-bg: #fff;
+        }
+
+        body {
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+            background-color: var(--secondary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            transition: background-color 0.3s;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            z-index: 100;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            background-color: #ddd;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-title { text-align: center; margin-bottom: 20px; }
+        .header-title h1 { margin: 0; font-size: 1.5rem; }
+
+        .card-container {
+            position: relative;
+            width: 90%;
+            max-width: 650px;
+            height: 400px;
+            perspective: 1000px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .card.flipped { transform: rotateY(180deg); }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: center;
+            border-radius: 16px;
+            background-color: var(--card-bg);
+        }
+
+        .card-front { border: 3px solid var(--primary-color); color: var(--text-color); }
+        .card-back {
+            background-color: var(--primary-color);
+            color: white;
+            transform: rotateY(180deg);
+            overflow-y: auto;
+        }
+
+        .card-number { position: absolute; top: 15px; left: 20px; font-weight: bold; }
+        .content-box { font-size: 1.1em; line-height: 1.6; word-break: keep-all; }
+        h2 { font-size: 1.2em; margin-bottom: 10px; word-break: keep-all; }
+
+        .controls { display: flex; align-items: center; gap: 20px; }
+        .ctrl-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            background-color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('session1')">21년 1회</button>
+        <button class="tab-btn" onclick="switchTab('session2')">21년 2회</button>
+        <button class="tab-btn" onclick="switchTab('session3')">21년 3회</button>
+    </div>
+
+    <div class="header-title">
+        <h1 id="chapterTitle">2021년 1회 기출 요약</h1>
+    </div>
+
+    <div class="card-container" onclick="flipCard()">
+        <div class="card" id="flashcard">
+            <div class="card-face card-front">
+                <div class="card-number" id="cardIndex">Q 1</div>
+                <h2 id="cardQ">데이터를 불러오는 중입니다...</h2>
+            </div>
+            <div class="card-face card-back">
+                <div class="card-number" id="cardIndexBack">A 1</div>
+                <div id="cardA" class="content-box">정답을 확인하세요.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="ctrl-btn" onclick="prevCard(event)">← 이전</button>
+        <div id="progressDisplay">1 / 0</div>
+        <button class="ctrl-btn" onclick="nextCard(event)">다음 →</button>
+    </div>
+
+    <script>
+        const datasets = {
+            session1: {
+                color: "#4a90e2",
+                title: "2021년 1회 기출 요약",
+                data: [
+                    { q: "간격 3cm, 면적 30cm² 평판 공기 콘덴서에 220V 전압 인가 시 두 판 사이 작용하는 힘은?", a: "정전에너지 \\(\\frac{1}{2} \\epsilon_0 E^2\\)에 면적 S를 곱하여 계산." },
+                    { q: "접지봉으로 희망하는 접지저항 값까지 줄일 수 없을 때 사용하는 것은?", a: "매설지선" },
+                    { q: "3상 3선식(R=10, X=20, V=60kV, cosθ=0.8, 전압강하율 10%)의 수전 가능 전력[kW]은?", a: "\\(e = \\frac{P(r+X\\tan\\theta)}{V^2}\\)<br>\\(0.1=\\frac{P(10+20 \\times 0.75)}{60^2 \\times 1000}\\)<br>\\(P = 14,400 [kW]\\)" },
+                    { q: "화력발전소 증기 및 급수 흐름 순서는?", a: "절탄기 → 보일러 → 과열기 → 터빈 → 복수기" },
+                    { q: "변압기 하루 손실량 계산?(14시간 20kW, 10시간 10kW, 역률 1, 전 부하동손 300W, 철손 100W)", a: "철손:\\(100 \\times 24 = 2400\\), 동손:\\(1^2 \\times 300 \\times 14 + 0.5^2 \\times 300 \\times 10 = 4950\\)<br>\\(철손 + 동손 = 7,350\\)" },
+                    { q: "통신선과 3상이 평행이고 1선지락으로 영상전류 100A가 흐를때 통신선에 유도되는 전자유도전압은 얼마인가?(상호인덕턴스는 0.06mH/km, 길이 40km)", a: "\\(E_m = \\omega ML \\times (3I_0) = 271.44 \\)" },
+                    { q: "안정도의 3가지 분류는?", a: "정태 안정도(완만), 과도 안정도(사고/급변), 동태 안정도(AVR 고려)" },
+                    { q: "히스테리시스 전동기의 특징은?", a: "유도전동기와 같은 고정자, 회전자 극은 고정자보다 늦음, 구속 시부터 동기속도 제외한 속도에서 일정한 토크 발생, 소음이 적음." },
+                    { q: "사이클로 컨버터(Cyclo-converter)의 특징은?", a: "대용량 저속 교류전동기에 주로 사용, 교류를 교류로 직접 변환하며 전압과 주파수를 동시에 가변." },
+                    { q: "단상 변압기(V=3300, \\(I_o=0.15\\), \\(P_i=330\\))의 자화전류[A]는?", a: "\\(I_i = 330/3300 = 0.1\\), \\(I_m = \\sqrt{0.15^2 - 0.1^2} = 0.112 [A]\\)" },
+                    { q: "직류발전기(P=4, 파권, Z=250, 1200rpm, E=600V)의 1극당 자속[Wb]은?", a: "\\(E = \\frac{PZN\\phi}{60a}\\) (파권 a=2), \\(\\phi = 0.06 [Wb]\\)" },
+                    { q: "BJT(Bipolar Junction Transistor)의 제어 특성은?", a: "베이스 전류로 컬렉터 전류를 제어하는 전류 제어형 소자, IGBT보다 큰 구동전력 필요" },
+                    { q: "3상 유도전동기 슬립 s로 운전 시 2차 유기전압 및 주파수 관계는?", a: "\\(E_{2s} = sE_2\\), \\(f_{2s} = sf_1\\)" },
+                    { q: "분권발전기(V=220, I=50, \\(R_a=0.2\\))의 유도 기전력[V]은?", a: "\\(E = V + I_aR_a = 220 + (50 \\times 0.2) = 230 [V]\\)" },
+                    { q: "동기조상기 운전 중 여자전류를 증가시키면?", a: "과여자 상태, 콘덴서로 작용하여 앞선 역률 발생." },
+                    { q: "변압기 병렬 운전 시 부하 분담과 임피던스/용량의 관계는?", a: "\\(\\frac{I_a}{I_b} = \\frac{Z_b}{Z_a} =\\frac{P_(an)}{P_(bn)}\\)<br>\\(\\frac{I_a}{I_b}=\\frac{z_b}{z_a} \\times \\frac{P_(an)}{P_(bn)}\\)" },
+                    { q: "단상 유도전압조정기에서 단락권선의 역할은?", a: "누설 리액턴스에 의한 전압강하 경감 및 원활한 전압 조정." },
+                    { q: "3상 동기발전기 출력 공식 (비철극기)", a: "\\(P = \\frac{3VE}{X_s} \\sin\\delta \\)" },
+                    { q: "실수축에서 근궤적 점근선의 교차점 공식은?", a: "\\(\\frac{\\text{극점의 합} - \\text{영점의 합}}{\\text{극점수} - \\text{영점수}}\\)" },
+                    { q: "2차 제어시스템 감쇠율 \\(\\xi < 0\\)인 경우 응답 특성은?", a: "발산 (불안정), 참고: 1보다 큰경우(과감쇠), 1인경우(임계감쇠), 0과 1사이인 경우(부족감쇠), 0인 경우(진동)" },
+                    { q: "제어계 e(t)의 최종값 정리(z-변환 영역)", a: "\\(e(\\infty) = \\lim_{z \\to 1} (1-z^{-1})E(z)\\)" },
+                    { q: "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+       "<img src='1.png' style='max-width:100%; max-height:180px; object-fit:contain; margin-bottom:15px;'>" +
+       "<span>단위램프입력에 대한 정상상태 오차가 0.01이다. k는?</span>" +
+       "</div>", a: "\\(K_v = \\frac{1}{0.01} = 100\\), \\(K_v = \\lim_{s \\to 0} sG(s)\\)" },
+                ]
+            },
+            session2: {
+                color: "#28a745",
+                title: "2021년 2회 기출 요약",
+                data: [
+                    { q: "진공 중 구 자성체의 감자율은?", a: "1/3 (원통: 1/2, 평면: 1)" },
+                    { q: "도체 A에 1C 주면 전위가 A=3, B=2일 때 A, B에 각각 1C, 2C 주면 A의 전위는?", a: "전위계수 이용: \\(V_1 = P_{11}Q_1 + P_{12}Q_2\\)<br>\\(3\\times 1 + 2\\times 2 = 7 \\)" },
+                    { q: "전력계통 내부 이상전압 중 크기가 가장 큰 경우는?", a: "무부하 선로 충전전류 차단 시" },
+                    { q: "배전용 변전소 주변압기의 주요 용도는?", a: "강압용 (수용가 공급)" },
+                    { q: "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+       "<img src='2.png' style='max-width:100%; max-height:180px; object-fit:contain; margin-bottom:15px;'>" +
+       "<span>S점에 3상 단락사고 시 단락전류는?</span>" +
+       "</div>", a: "기준 100MVA을 잡고 G1,G2 병렬로 계산시 50%, 변압기는 100/40=20%. 선로는 \\(\\frac{100\\times 50 \\times 0.6}{110^2}=24.8\\text{%} \\), 따라서 전류는 \\(I_s=\\frac{100}{\\text{%}Z} \\frac{P}{\\sqrt{3} V}\\) " },
+                    { q: "추기 증기를 급수 가열에 이용하는 열사이클은?", a: "재생 사이클" },
+                    { q: "선로 절연수준 저감, 변압기 단절연 가능한 중성점 접지방식은?", a: "직접접지방식" },
+                    { q: "최대수용전력이 3kW인 수용가가 3세대, 5kW인 수용가가 6세대라고 할때 주상변압기의 최소 용량은?", a: "\\(\\text{용량} = \\frac{3\\times 3 + 5\\times 6}{\\text{부등률} \\times \\text{역률}}\\)" },
+                    { q: "부하전류가 크지 않을 때 직류 직권전동기 발생 토크는?(단, 자기회로 불포화)", a: "토크는 전류의 제곱에 비례" },
+                    { q: "4극 중권 직류발전기 \\(I_a=40A \\)일 때, 각 병렬회로 전류는?", a: "중권은 병렬회로수랑 극수랑 같다. \\(\\frac{40}{4}= 10 [A]\\)" },
+                    { q: "부스트 컨버터 출력전압 공식?", a: "\\(V_{out} = V_{in} \\times \\frac{1}{1-D}\\)" },
+                    { q: "단상 정류자전동기 중 반발전동기에 속하는 것은?", a: "아트킨손형 전동기" },
+                    { q: "변압기 와류손과 규소강판 두께의 관계", a: "두께의 제곱에 비례함." },
+                    { q: "다이오드 과전류 소손 우려 시 조치는?", a: "다이오드를 병렬로 추가 연결(전류 분산)." },
+                    { q: "제어요소가 제어대상에 주는 양은?", a: "조작량" },
+                    { q: "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+       "<img src='3.png' style='max-width:100%; max-height:180px; object-fit:contain; margin-bottom:15px;'>" +
+       "<span>구동점 임피던스가 그림과 같고 Z(0)=1일 때 R, L, C의 값은?</span>" +
+       "</div>", a: "저항을 R, 리액턴스를 \\(sL\\), \\(\\frac{1}{sC}\\)로 보고 병렬 합성저항을 구한다. s=0일때 \\(Z(0)=R=1\\), \\(\\frac{R}{L}=10\\), \\(L=0.1\\)" },
+                ]
+            },
+            session3: {
+                color: "#6610f2",
+                title: "2021년 3회 기출 요약",
+                data: [
+                    { q: "환상선로 단락보호에 주로 사용되는 방식?", a: "방향거리계전기 (위치와 방향 고려)" },
+                    { q: "변압기 보호용 비율차동계전기를 사용해 Δ-Y 변압기 보호하려면 변류기의 결선방식은?", a: "Y-Δ 결선 (위상차 30도 보정 목적)" },
+                    { q: "가공 전선로의 전선 실제 길이 공식 (S 경간, D 이도)", a: "\\(L = S + \\frac{8D^2}{3S}\\), \\(D=\\frac{WS^2}{8T}\\), \\(T=\\frac{\\text{인장하중}}{\\text{안전율}}\\)" },
+                    { q: "송전선로 복도체 사용의 주된 장점은?", a: "코로나 임계전압 상승, 인덕턴스 감소, 정전용량 증가." },
+                    { q: "송전선 특성 임피던스와 선로 길이의 관계", a: "길이에 따라 변하지 않음 (불변)." },
+                    { q: "코로나 임계전압과 전선 표면 상태의 관계", a: "전선 표면이 매끈할수록 표면계수가 커져 임계전압이 높아짐." },
+                    { q: "단상 반파정류 직류전압 \\(E_d\\)와 실효값 E의 관계?", a: "\\(E_d = 0.45E - e\\) (e는 전압강하)" },
+                    { q: "비돌극 동기발전기 최대 출력 조건", a: "부하각(\\(\\delta \\))이 90도일 때 (\\(P_{max} = \\frac{3VE}{X_s}\\))" },
+                    { q: "2차 전력을 동력으로 바꿔 직류전동기에 가하는 2차 여자법", a: "크레머 방식" },
+                    { q: "직류발전기 특성곡선 중 '무부하특성곡선'의 관계", a: "계자전류와 유도기전력" },
+                    { q: "3상 유도전동기 고조파 중 기본파와 역방향인 회전자계는?", a: "제5고조파" },
+                    { q: "분류저항기를 직권권선에 병렬 연결해 속도를 제어하는 법", a: "계자제어법" },
+                    { q: "전일효율 계산식", a: "\\(\\frac{\\text{24시간 총 출력}}{\\text{24시간 총 출력} + \\text{24시간 총 손실}} \\times 100\\)" },
+                    { q: "60Hz, 600rpm 동기기에 직결된 기동용 유도전동기 극수는?", a: "10극 (기동용은 2극 적게 설계)" },
+                    { q: "직류 분권전동기에서 토크(T)와 부하전류(I)의 관계는?", a: "토크는 전류에 비례" },
+                    { q: "직류분권전동기 정격전압을 공급하면 전기자전류가 많이 흐르다가 회전속도가 증가함에 따라 전기자전류가 감소하는 원인", a: "역기전력 상승에 의해 전류 흐름 억제." },
+                    { q: "근궤적이 \\(j\\omega \\)축과 교차할 때(임계 안정) 이득 K 구하는 법", a: "루스 판별법의 행이 0이 되는 조건 활용, 삼차식일 경우 내항과 외항의 곱이 같아야 함." },
+                ]
+            }
+        };
+
+        let currentTab = 'session1';
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        const card = document.getElementById('flashcard');
+        const cardQ = document.getElementById('cardQ');
+        const cardA = document.getElementById('cardA');
+        const cardIndex = document.getElementById('cardIndex');
+        const cardIndexBack = document.getElementById('cardIndexBack');
+        const progressDisplay = document.getElementById('progressDisplay');
+        const chapterTitle = document.getElementById('chapterTitle');
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            currentIndex = 0;
+            isFlipped = false;
+            card.classList.remove('flipped');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            const themeColor = datasets[tabName].color;
+            document.documentElement.style.setProperty('--primary-color', themeColor);
+            chapterTitle.textContent = datasets[tabName].title;
+
+            renderCard();
+        }
+
+        function renderCard() {
+            const data = datasets[currentTab].data;
+            const item = data[currentIndex];
+
+            cardQ.innerHTML = item.q;
+            cardA.innerHTML = item.a;
+
+            const idxText = `${currentIndex + 1} / ${data.length}`;
+            cardIndex.textContent = `Q ${idxText}`;
+            cardIndexBack.textContent = `A ${idxText}`;
+            progressDisplay.textContent = idxText;
+
+            if (window.MathJax) {
+                MathJax.typesetPromise([cardQ, cardA]).catch((err) => console.log(err));
+            }
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            card.classList.toggle('flipped');
+        }
+
+        function nextCard(e) {
+            if(e) e.stopPropagation();
+            if (currentIndex < datasets[currentTab].data.length - 1) {
+                if (isFlipped) {
+                    flipCard();
+                    setTimeout(() => { currentIndex++; renderCard(); }, 300);
+                } else { currentIndex++; renderCard(); }
+            }
+        }
+
+        function prevCard(e) {
+            if(e) e.stopPropagation();
+            if (currentIndex > 0) {
+                if (isFlipped) {
+                    flipCard();
+                    setTimeout(() => { currentIndex--; renderCard(); }, 300);
+                } else { currentIndex--; renderCard(); }
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "ArrowRight") nextCard();
+            if (e.key === "ArrowLeft") prevCard();
+            if (e.key === " ") flipCard();
+        });
+
+        // 초기 실행
+        renderCard();
+    </script>
+</body>
+</html>
